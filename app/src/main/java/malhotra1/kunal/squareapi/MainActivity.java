@@ -1,10 +1,12 @@
 package malhotra1.kunal.squareapi;
 
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -23,8 +25,7 @@ public class MainActivity extends AppCompatActivity {
     HttpHandler mHttpHandler;
     private static final String URL = "https://api.foursquare.com/v2/venues/explore?near=%20Dubai%20&oauth_token=EE0FZFVO5DR2PA4VPGSM2VKB0A3CAOM1I54N4HO04FNFVCDR&v=20180307";
     ArrayList<HashMap<String, String>> itemList;
-    private static final String TAG = MainActivity.class.getSimpleName();
-
+    private LinearLayout mLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         itemList = new ArrayList<>();
         mListView = (ListView) findViewById(R.id.list_view_main);
+        mLinearLayout = (LinearLayout) findViewById(R.id.linear_layout_main);
         new AsyncTask().execute();
     }
 
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(getApplicationContext(), "Connecting To The Server",Toast.LENGTH_SHORT).show();
+            Snackbar.make(mLinearLayout, "Please Wait Connecting To Server",Snackbar.LENGTH_SHORT).show();
         }
 
         @Override
@@ -60,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jsonObject4 = jsonObject3.getJSONObject("venue");
                         JSONArray jsonArray2 = jsonObject3.getJSONArray("tips");
                         JSONObject jsonObject6 = jsonObject4.getJSONObject("location");
-                        Log.d(TAG, "doInBackground: " + jsonObject6);
+                        String name = jsonObject4.getString("name");
+                        String rating = jsonObject4.getString("rating");
+                        String address = "";
                         String photourl = "";
                         for (int j =0; j < jsonArray2.length(); j++){
                             JSONObject jsonObject5 = jsonArray2.getJSONObject(j);
@@ -68,9 +72,6 @@ public class MainActivity extends AppCompatActivity {
                                 photourl = jsonObject5.getString("photourl");
                             }
                         }
-                        String name = jsonObject4.getString("name");
-                        String rating = jsonObject4.getString("rating");
-                        String address = "";
                         if (jsonObject6.has("address")) {
                              address = jsonObject6.getString("address");
                         }
